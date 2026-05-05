@@ -7,7 +7,6 @@ import pyperclip
 import pyautogui
 import cv2
 import mediapipe as mp
-import mediapipe.python.solutions.hands as mp_hands
 import subprocess
 import time
 import shutil
@@ -27,18 +26,25 @@ os.makedirs(FALLBACK_FOLDER, exist_ok=True)
 
 incoming_data = None
 
+from mediapipe.tasks import python as mp_python
+from mediapipe.tasks.python import vision
+
 # Hand Gesture Detection
 class HandGestureDetector:
     def __init__(self):
-        self.mp_hands = mp_hands
-        self.hands = self.mp_hands.Hands()
+        base_options = mp_python.BaseOptions(model_asset_path='hand_landmarker.task')
+        options = vision.HandLandmarkerOptions(base_options=base_options, num_hands=1)
+        self.detector = vision.HandLandmarker.create_from_options(options)
+
     def detect(self, frame):
         rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        result = self.hands.process(rgb)
-        if result.multi_hand_landmarks:
-            for hand_landmarks in result.multi_hand_landmarks:
+        mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb)
+        result = self.detector.detect(mp_image)
+        
+        if result.hand_landmarks:
+            for hand_landmarks in result.hand_landmarks:
                 tips = [8, 12, 16, 20]
-                fingers = [hand_landmarks.landmark[tip].y < hand_landmarks.landmark[tip - 2].y for tip in tips]
+                fingers = [hand_landmarks[tip].y < hand_landmarks[tip - 2].y for tip in tips]
                 return "open" if all(fingers) else "closed"
         return None
 
