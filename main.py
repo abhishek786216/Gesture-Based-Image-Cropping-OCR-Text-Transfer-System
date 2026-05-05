@@ -7,6 +7,7 @@ import pyperclip
 import pyautogui
 import cv2
 import mediapipe as mp
+import mediapipe.python.solutions.hands as mp_hands
 import subprocess
 import time
 import shutil
@@ -21,7 +22,7 @@ with open("config.json", "r") as f:
 PORT = CONFIG["port"]
 PEER_IP = CONFIG["peer_device_ip"]
 THIS_IP = CONFIG["this_device_ip"]
-FALLBACK_FOLDER = "D:/Data_Transfer_AI"
+FALLBACK_FOLDER = os.path.abspath("./Data_Transfer_AI")
 os.makedirs(FALLBACK_FOLDER, exist_ok=True)
 
 incoming_data = None
@@ -29,7 +30,7 @@ incoming_data = None
 # Hand Gesture Detection
 class HandGestureDetector:
     def __init__(self):
-        self.mp_hands = mp.solutions.hands
+        self.mp_hands = mp_hands
         self.hands = self.mp_hands.Hands()
     def detect(self, frame):
         rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -91,7 +92,7 @@ def get_focused_folder():
         return title
     return None
 
-# Paste and open received content
+# Paste and open received contentpip
 def perform_paste():
     global incoming_data
     if not incoming_data:

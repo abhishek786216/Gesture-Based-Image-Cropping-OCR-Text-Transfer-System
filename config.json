@@ -1,5 +1,5 @@
 	{
-	  "this_device_ip": "",
-	  "peer_device_ip": "",
+	  "this_device_ip": "10.10.48.166",
+	  "peer_device_ip": "10.10.50.15",
 	  "port": 9999
 	}
