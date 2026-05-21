@@ -1,0 +1,1 @@
+python "c:\Users\abhis\OneDrive\Desktop\abhishek aids\GesturePen\gesture_pen.py"
